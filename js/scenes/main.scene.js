@@ -5,6 +5,10 @@ export class MainScene extends Phaser.Scene{
         this.playerQuantity = 2;
         this.player = "";
         this.secondPlayer = "";
+        this.scoreText = "";
+        this.scoreTextPlayer2 = "";
+        this.gameTime = 60;
+        this.timer = 0;
     }
 
     /*init(data){
@@ -25,6 +29,7 @@ export class MainScene extends Phaser.Scene{
         this.load.spritesheet('secondPlayer', '../img/secondPlayer.png', { frameWidth: 32, frameHeight: 48});
     }
     create(){
+        let self = this;
         this.add.image(400,265, 'jungle').setScale(2);
         let platforms = this.physics.add.staticGroup();
         platforms.create(180, 530, 'ground');
@@ -52,14 +57,18 @@ export class MainScene extends Phaser.Scene{
         this.player = this.physics.add.sprite(280, 450, 'dude');
         this.player.setCollideWorldBounds(true);
         this.player.setBounce(0.2);
+        this.player.score = 0;
         this.physics.add.collider(this.player, platforms);
 
         if(this.playerQuantity > 1) {
             this.secondPlayer = this.physics.add.sprite(500, 450, 'secondPlayer');
             this.secondPlayer.setCollideWorldBounds(true);
             this.secondPlayer.setBounce(0.2);
+            this.secondPlayer.score = 0;
             this.physics.add.collider(this.secondPlayer, platforms);
-            //this.physics.add.overlap(this.secondPlayer, stars, collectStar, null, this);
+            this.scoreTextPlayer2 = this.add.text(516, 16, 'P2 score: 0', { fontSize: '32px', fill: '#000'});
+            this.timeText = this.add.text(350, 0, this.gameTime, {fontFamily: 'font1', fontSize: '64px', color: 'white'});
+            //this.refreshTime();
         }
 
         let stars = this.physics.add.group({
@@ -71,8 +80,64 @@ export class MainScene extends Phaser.Scene{
         stars.children.iterate(function (child) {
            child.setBounce(0.5);
         });
-        //this.physics.add.overlap(this.player, stars, collectStar, null, this);
+        this.physics.add.overlap(this.player, stars, collectStar, null, this);
 
+        let bombs = this.physics.add.group();
+        this.physics.add.collider(bombs, platforms);
+        this.physics.add.collider(this.player, bombs, hitBomb, null, this);
+
+        if(this.playerQuantity > 1){
+            this.physics.add.overlap(this.secondPlayer, stars, collectStarPlayer2, null, this);
+            this.physics.add.collider(this.secondPlayer, bombs, hitBombPlayer2, null, this);
+        }
+        function collectStar(player, star){
+            this.player.score += 10;
+            colliderStar(star);
+            this.scoreText.setText('P1 score: ' + this.player.score);
+        }
+        function collectStarPlayer2(player, star){
+            this.secondPlayer.score += 10;
+            colliderStar(star);
+            this.scoreTextPlayer2.setText('P2 score: ' + this.secondPlayer.score);
+        }
+        function colliderStar(star){
+            star.disableBody(true, true);
+            if(stars.countActive(true) === 0){
+                let bomb = bombs.create(Phaser.Math.Between(0, 800), 16, 'bomb');
+                bomb.setBounce(1);
+                bomb.setCollideWorldBounds(true);
+                bomb.setVelocity(Phaser.Math.Between(-400*self.level, 400*self.level), 20);
+
+                stars.children.iterate(function (child){
+                    child.enableBody(true, child.x, 0, true, true);
+                });
+            }
+        }
+        function hitBomb(element, bomb){
+            if(this.playerQuantity === 1) {
+                this.physics.pause();
+                this.player.setTint(0xff0000);
+                this.player.anims.play('turn');
+                endScene();
+            }
+            else{
+                this.player.score = this.player.score -50 <= 0 ? 0 : this.player.score - 50;
+                this.scoreText.setText('P1 score: ' + this.player.score);
+            }
+        }
+        function hitBombPlayer2(element, bomb){
+            this.secondPlayer.score = this.secondPlayer.score -50 <= 0 ? 0 : this.secondPlayer.score - 50;
+            this.scoreTextPlayer2.setText('P2 score: ' + this.secondPlayer.score);
+        }
+        function endScene(){
+            self.time.addEvent({
+                delay: 1500,
+                loop: false,
+                callBack: () => {
+                    self.scene.start("endScene");
+                }
+            });
+        }
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('dude', { start:0, end:3 }),
@@ -110,8 +175,56 @@ export class MainScene extends Phaser.Scene{
             frameRate: 10,
             repeat: -1
         });
+        this.scoreText = this.add.text(16, 16, 'P1 score: 0', { fontSize: '32px', fill: '#000'});
     }
-    update(){
+
+    refreshTime(){
+        this.gameTime--;
+        this.timeText.setText(this.gameTime);
+        if(this.gameTime === 0){
+            //this.physics.pause();
+            this.player.setTint(0xff0000);
+            this.secondPlayer.setTint(0xff0000);
+
+            this.time.addEvent({
+                delay: 1500,
+                loop: false,
+                callback: () => {
+                    //this.scene.start("endScene");
+                }
+            });
+        }
+        else{
+            console.log("refreshTime", this.gameTime);
+            this.time.delayedCall({
+                delay: 1000,
+                callback: this.refreshTime(),
+                callbackScope: this
+            });
+        }
+    }
+
+    update(time, delta){
+        this.timer += delta;
+        while (this.timer > 1000) {
+            this.timer -= 1000;
+            this.gameTime --;
+
+            this.timeText.setText(this.gameTime);
+            if(this.gameTime === 0){
+                this.physics.pause();
+                this.player.setTint(0xff0000);
+                this.secondPlayer.setTint(0xff0000);
+
+                this.time.addEvent({
+                    delay: 1500,
+                    loop: false,
+                    callback: () => {
+                        this.scene.start("endScene");
+                    }
+                });
+            }
+        }
         let cursors = this.input.keyboard.createCursorKeys();
 
         if(cursors.left.isDown){
@@ -155,5 +268,4 @@ export class MainScene extends Phaser.Scene{
             }
         }
     }
-
 };
