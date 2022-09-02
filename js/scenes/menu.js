@@ -3,17 +3,19 @@ export class Menu extends Phaser.Scene{
         super('menuScene');
         this.levelName = 'Easy';
         this.modeName = '1 Player';
+        this.playerQuantity = 1;
     }
 
     init(data){
-        //this.playerQuantity = data.playerQuantity;
         if(data !== null && JSON.stringify(data) !== JSON.stringify({})) {
-            console.log(data)
             if(data.levelName !== null && data.levelName !== undefined) {
                 this.levelName = data.levelName;
             }
             if(data.modeName !== null && data.modeName !== undefined) {
                 this.modeName = data.modeName;
+            }
+            if(data.playerQuantity !== null && data.playerQuantity !== undefined){
+                this.playerQuantity = data.playerQuantity;
             }
         }
     }
@@ -34,7 +36,9 @@ export class Menu extends Phaser.Scene{
         const startOption = this.add.zone(310, 98, 180, 90);
         startOption.setOrigin(0);
         startOption.setInteractive();
-        startOption.once('pointerdown', () => this.scene.start('gameScene'));
+        startOption.once('pointerdown', () => this.scene.start('gameScene', {
+            playerQuantity: this.playerQuantity
+        }));
         //this.add.graphics().lineStyle(2, 0xff0000).strokeRectShape(startOption);
 
         const levelOption = this.add.zone(310, 202, 180, 90);
@@ -55,8 +59,8 @@ export class Menu extends Phaser.Scene{
         controlsOption.once('pointerdown', () => this.scene.start('controlsScene'));
         //this.add.graphics().lineStyle(2, 0xff0000).strokeRectShape(controlsOption);
 
-        this.add.text(520, 400, 'Level: ' + this.levelName, {fontSize: '32px', fill: '#fff'});
-        this.add.text(520, 450, 'Mode: ' + this.modeName, {fontSize: '32px', fill: '#fff'});
+        this.add.text(510, 400, 'Level: ' + this.levelName, {fontSize: '32px', fill: '#fff'});
+        this.add.text(510, 450, 'Mode: ' + this.modeName, {fontSize: '32px', fill: '#fff'});
     }
     update(){
 

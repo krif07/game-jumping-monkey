@@ -20,9 +20,14 @@ export class MainScene extends Phaser.Scene{
         this.modeName = '1 Player';
     }
 
-    /*init(data){
-        this.level = data.level;
-    }*/
+    init(data){
+        if(data !== null && JSON.stringify(data) !== JSON.stringify({})) {
+            if (data.playerQuantity !== null && data.playerQuantity !== undefined) {
+                this.playerQuantity = data.playerQuantity;
+            }
+            //this.level = data.level;
+        }
+    }
 
     preload(){
         this.load.baseURL = './';
