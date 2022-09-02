@@ -36,8 +36,6 @@ export class MainScene extends Phaser.Scene{
         this.load.image('ground', '../img/platform4.png');
         this.load.image('star', '../img/star.png');
         this.load.image('bomb', '../img/bomb.png');
-        this.load.image('controlsPlayer1', '../img/Player1.png');
-        this.load.image('controlsPlayer2', '../img/Player2.png');
 
         this.load.spritesheet('dude', '../img/dude.png', { frameWidth: 32, frameHeight: 48});
         this.load.spritesheet('secondPlayer', '../img/secondPlayer.png', { frameWidth: 32, frameHeight: 48});
