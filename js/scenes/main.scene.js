@@ -25,7 +25,13 @@ export class MainScene extends Phaser.Scene{
             if (data.playerQuantity !== null && data.playerQuantity !== undefined) {
                 this.playerQuantity = data.playerQuantity;
             }
-            //this.level = data.level;
+            if(data.level !== null && data.level !== undefined){
+                this.level = data.level;
+                this.levelName = data.levelName;
+            }
+            if(data.modeName !== null && data.modeName !== undefined){
+                this.modeName = data.modeName;
+            }
         }
     }
 
@@ -46,6 +52,31 @@ export class MainScene extends Phaser.Scene{
     }
     create(){
         let self = this;
+        this.gameTime = 60;
+        /*let progressBar = this.add.graphics();
+        let width = this.cameras.main.width;
+        let height = this.cameras.main.height;
+        let loadingText = this.add.text(width /2, height /2 -50, 'Loading...', {font: '20px monospace', fill: '#ffffff'});
+        let percentText = this.add.text(width /2, height -180, '0%', {font: '18px monospace', fill: '#ffffff'});
+        let assetText = this.add.text(width /2, height -100, '', {font: '18px monospace', fill: '#ffffff'});
+
+        this.load.on('progress', function (value) {
+            percentText.setText(parseInt(value * 100) + '%');
+            progressBar.clear();
+            progressBar.fillStyle(0xffffff, 1);
+            progressBar.fillRect(250, 280, 300 * value, 30);
+        });
+
+        this.load.on('fileprogress', function (file) {
+            assetText.setText('Loading asset: ' + file.key);
+        });
+
+        this.load.on('complete', function () {
+            progressBar.destroy();
+            loadingText.destroy();
+            percentText.destroy();
+            assetText.destroy();
+        });*/
 
         if(this.musicStart){
             this.musicStart = false;
@@ -70,7 +101,7 @@ export class MainScene extends Phaser.Scene{
         else if (this.level === 2){
             platforms.create(145, 100, 'ground');
             platforms.create(240, 100, 'ground');
-            platforms.create(240, 220, 'ground');
+            platforms.create(220, 220, 'ground');
             platforms.create(650, 180, 'ground');
             platforms.create(480, 320, 'ground');
             platforms.create(520, 420, 'ground');
@@ -83,7 +114,6 @@ export class MainScene extends Phaser.Scene{
         this.physics.add.collider(this.player, platforms);
 
         if(this.playerQuantity > 1) {
-            this.modeName = "2 Players";
             this.secondPlayer = this.physics.add.sprite(500, 450, 'secondPlayer');
             this.secondPlayer.setCollideWorldBounds(true);
             this.secondPlayer.setBounce(0.2);
@@ -166,6 +196,7 @@ export class MainScene extends Phaser.Scene{
                 scorePlayer: self.player.score,
                 scoreSecondPlayer: self.secondPlayer.score,
                 levelName: self.levelName,
+                level: self.level,
                 modeName: self.modeName
             });
             /*self.time.addEvent({
@@ -310,7 +341,6 @@ export class MainScene extends Phaser.Scene{
             });
         }
         else{
-            console.log("refreshTime", this.gameTime);
             this.time.delayedCall({
                 delay: 1000,
                 callback: this.refreshTime(),
@@ -343,6 +373,7 @@ export class MainScene extends Phaser.Scene{
                                 scorePlayer: self.player.score,
                                 scoreSecondPlayer: self.secondPlayer.score,
                                 levelName: self.levelName,
+                                level: self.level,
                                 modeName: self.modeName
                             });
                         }

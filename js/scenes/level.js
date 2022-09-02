@@ -2,6 +2,7 @@ export class Level extends Phaser.Scene{
     constructor() {
         super('levelScene');
         this.levelName = 'Easy';
+        this.level = 1;
     }
 
     preload(){
@@ -39,7 +40,8 @@ export class Level extends Phaser.Scene{
         backOption.setOrigin(0);
         backOption.setInteractive();
         backOption.once('pointerdown', () => this.scene.start('menuScene', {
-                levelName: this.levelName
+                levelName: this.levelName,
+                level: this.level
             })
         );
         //this.add.graphics().lineStyle(2, 0xff0000).strokeRectShape(controlsOption);
@@ -49,16 +51,20 @@ export class Level extends Phaser.Scene{
         switch (level) {
             case 1:
                 this.levelName = 'Easy';
+                this.level = 1;
                 break;
             case 2:
                 this.levelName = 'Medium';
+                this.level = 2;
                 break;
             case 3:
                 this.levelName = 'Hard';
+                this.level = 3;
                 break;
         }
         this.scene.start('menuScene', {
-            levelName: this.levelName
+            levelName: this.levelName,
+            level: this.level
         });
     }
     update(){

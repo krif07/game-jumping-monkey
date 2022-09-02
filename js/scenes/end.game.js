@@ -8,6 +8,7 @@ export class EndGame extends Phaser.Scene{
         this.scorePlayer = data.scorePlayer;
         this.scoreSecondPlayer = data.scoreSecondPlayer;
         this.levelName = data.levelName;
+        this.level = data.level;
         this.modeName = data.modeName;
     }
 
@@ -32,7 +33,11 @@ export class EndGame extends Phaser.Scene{
         const backOption = this.add.zone(0, 0, 800, 530);
         backOption.setOrigin(0);
         backOption.setInteractive();
-        backOption.once('pointerdown', () => this.redirectScene('menuScene'));
+        backOption.once('pointerdown', () => this.redirectScene('menuScene',{
+            level: this.level,
+            levelName: this.levelName,
+            modeName: this.modeName
+        }));
     }
     redirectScene(sceneName) {
         this.scene.start(sceneName);

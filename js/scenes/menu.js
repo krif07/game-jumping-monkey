@@ -2,6 +2,7 @@ export class Menu extends Phaser.Scene{
     constructor() {
         super('menuScene');
         this.levelName = 'Easy';
+        this.level = 1;
         this.modeName = '1 Player';
         this.playerQuantity = 1;
     }
@@ -10,12 +11,11 @@ export class Menu extends Phaser.Scene{
         if(data !== null && JSON.stringify(data) !== JSON.stringify({})) {
             if(data.levelName !== null && data.levelName !== undefined) {
                 this.levelName = data.levelName;
-            }
-            if(data.modeName !== null && data.modeName !== undefined) {
-                this.modeName = data.modeName;
+                this.level = data.level;
             }
             if(data.playerQuantity !== null && data.playerQuantity !== undefined){
                 this.playerQuantity = data.playerQuantity;
+                this.modeName = data.modeName;
             }
         }
     }
@@ -37,7 +37,10 @@ export class Menu extends Phaser.Scene{
         startOption.setOrigin(0);
         startOption.setInteractive();
         startOption.once('pointerdown', () => this.scene.start('gameScene', {
-            playerQuantity: this.playerQuantity
+            playerQuantity: this.playerQuantity,
+            level : this.level,
+            levelName: this.levelName,
+            modeName: this.modeName
         }));
         //this.add.graphics().lineStyle(2, 0xff0000).strokeRectShape(startOption);
 
