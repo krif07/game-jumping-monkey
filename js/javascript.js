@@ -9,7 +9,7 @@ const config = {
     type: Phaser.AUTO,
     width: 800,
     height: 530,
-    scene: [MainScene, Menu, Level, ModeGame, Controls, EndGame],
+    scene: [Menu, MainScene, Level, ModeGame, Controls, EndGame],
     scale: {
         mode: Phaser.Scale.FIT
     },

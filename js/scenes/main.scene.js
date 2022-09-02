@@ -47,7 +47,7 @@ export class MainScene extends Phaser.Scene{
         if(this.musicStart){
             this.musicStart = false;
             const music = this.sound.add('music');
-            //music.play({volume:0.15, loop:true});
+            music.play({volume:0.15, loop:true});
         }
         this.add.image(400,265, 'jungle').setScale(2);
         let platforms = this.physics.add.staticGroup();
